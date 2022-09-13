@@ -8,6 +8,43 @@
 </head>
 <body>
     
-    <h1>Service /api/maths - Documentation</h1>
+    <h1>Get : Maths endpoint<br>
+        List of possible query strings:
+    </h1>
+    <hr>
+    <h2>
+        <p>
+            ? op = + & x = number & y = number<br>
+            return {"op":"+","x":number,"y":number,"value": x + y}
+        </p>
+        <p>
+            ? op = - & x = number & y = number<br>
+            return {"op":"-","x":number,"y":number,"value": x - y}
+        </p>
+        <p>
+            ? op = * & x = number & y = number<br>
+            return {"op":"*","x":number,"y":number,"value": x * y}
+        </p>
+        <p>
+            ? op = / & x = number & y = number<br>
+            return {"op":"/","x":number,"y":number,"value": x / y}
+        </p>
+        <p>
+            ? op = % & x = number & y = number<br>
+            return {"op":"%","x":number,"y":number,"value": x % y}
+        </p>
+        <p>
+            ? op = ! & n = integer<br>
+            return {"op":"!","n":number,"value": n!}
+        </p>
+        <p>
+            ? op = p & n = integer<br>
+            return {"op":"p","n":number,"value": true if n is a prime number}
+        </p>
+        <p>
+            ? op = np & n = integer<br>
+            return {"op":"np","n":number,"value": nth prime number}
+        </p>
+    </h2>
 </body>
 </html>
