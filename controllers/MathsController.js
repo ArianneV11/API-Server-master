@@ -7,7 +7,6 @@ module.exports =
             super(HttpContext);
             //this.repository = new Repository(new MathModel());
         }
-        
         get() {
             if (this.HttpContext.path.queryString == '?') {
                 let helpPage = path.join(process.cwd(), "wwwroot/helpPages/mathsServiceHelp.html");
