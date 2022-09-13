@@ -53,6 +53,7 @@ module.exports =
                         }
                 }else{
                      let respondObj = {error: "op parameter is missing"};
+                     this.HttpContext.response.JSON(this.HttpContext.path.params.error);
                      this.HttpContext.response.JSON(respondObj);
                 }
             }
