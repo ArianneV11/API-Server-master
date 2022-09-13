@@ -7,6 +7,7 @@ module.exports =
             super(HttpContext);
             //this.repository = new Repository(new MathModel());
         }
+        
         get() {
             if (this.HttpContext.path.queryString == '?') {
                 let helpPage = path.join(process.cwd(), "wwwroot/helpPages/mathsServiceHelp.html");
@@ -20,10 +21,7 @@ module.exports =
                             this.HttpContext.path.params.value = parseInt(this.HttpContext.path.params.x) + parseInt(this.HttpContext.path.params.y);
                             if(this.HttpContext.path.params.op == ' ')
                                 this.HttpContext.path.params.op = '+';
-                            //else{
-                                //let respondObj = {error: "op is missing"};
                                 this.HttpContext.response.JSON(this.HttpContext.path.params);
-                           // }
                             break;    
                         case "-":
                             this.HttpContext.path.params.value = parseInt(this.HttpContext.path.params.x) - parseInt(this.HttpContext.path.params.y);
@@ -55,11 +53,21 @@ module.exports =
                             break;
                         }
                 }else{
-
+                     let respondObj = {error: "op parameter is missing"};
+                     this.HttpContext.response.JSON(respondObj);
                 }
             }
                 
         }
+    }
+    function Infinity(result) {
+            return result;
+    }
+    function NaN(result){
+        return result;
+    }
+    function missingParameter(result){
+        return result;
     }
     function factorial(n) {
         if (n === 0 || n === 1) {
