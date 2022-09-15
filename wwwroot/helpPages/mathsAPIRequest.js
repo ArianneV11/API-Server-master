@@ -1,5 +1,5 @@
 //const apiBaseURL = "http://localhost:5000/api/maths";
-const apiBaseURL= "https://three-ethereal-castanet.glitch.me/api/maths";
+const apiBaseURL= "https://201964860-api-server.glitch.me/api/maths";
 function webAPI_getMaths(queryString, successCallBack = null, errorCallBack = null) {
     $.ajax({
         url: apiBaseURL + queryString,
