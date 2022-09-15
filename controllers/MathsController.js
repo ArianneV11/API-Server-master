@@ -5,7 +5,36 @@ module.exports =
     class MathsController extends require('./Controller') {
         constructor(HttpContext) {
             super(HttpContext);
-            //this.repository = new Repository(new MathModel());
+        }
+        error(message){
+            this.HttpContext.path.params["error"] = message;
+            return false;
+        }
+        getNumberParameters(paramsName){
+            if (paramsName in this.HttpContext.path.params){
+                let n = parseFloat(this.HttpContext.path.params[paramsName]);
+                if(isNaN(n))
+                    return this.error(paramsName + " parameter is not a number");
+                this.HttpContext.path.params[paramsName] = n;
+            }else
+                return this.error(paramsName + " parameter is missing");
+            return true; 
+        }
+        checkNumberParameters(nbParams){
+            if (Object.values(this.HttpContext.path.params).length > nbParams) {
+                return this.error("too many parameters");    
+            }     
+            return true;
+        }
+        oneParameter(){
+            return (
+                this.getNumberParameters('n') && this.checkNumberParameters(2)
+            );
+        }
+        twoParameter(){
+            return (
+                this.getNumberParameters('x') && this.getNumberParameters('y') && this.checkNumberParameters(3)
+            );
         }
         get() {
             if (this.HttpContext.path.queryString == '?') {
@@ -14,60 +43,81 @@ module.exports =
                 this.HttpContext.response.content("text/html", pageContent);
             }
             else{
-                if(this.HttpContext.path.params.op){
+                if('op' in this.HttpContext.path.params){
+                    
                     switch(this.HttpContext.path.params.op){
-                        case " " || "+":
-                            this.HttpContext.path.params.value = parseInt(this.HttpContext.path.params.x) + parseInt(this.HttpContext.path.params.y);
-                            if(this.HttpContext.path.params.op == ' ')
-                                this.HttpContext.path.params.op = '+';
-                                this.HttpContext.response.JSON(this.HttpContext.path.params);
+                        case " ":
+                            if(this.twoParameter()){
+                                this.HttpContext.path.params.value = parseInt(this.HttpContext.path.params.x) + parseInt(this.HttpContext.path.params.y);
+                                if(this.HttpContext.path.params.op == ' ')
+                                    this.HttpContext.path.params.op = '+';
+                            }
                             break;    
                         case "-":
-                            this.HttpContext.path.params.value = parseInt(this.HttpContext.path.params.x) - parseInt(this.HttpContext.path.params.y);
-                            this.HttpContext.response.JSON(this.HttpContext.path.params);
+                            if(this.twoParameter()){
+                                this.HttpContext.path.params.value = parseInt(this.HttpContext.path.params.x) - parseInt(this.HttpContext.path.params.y);
+                            }
                             break;
                         case "*":
-                            this.HttpContext.path.params.value = parseInt(this.HttpContext.path.params.x) * parseInt(this.HttpContext.path.params.y);
-                            this.HttpContext.response.JSON(this.HttpContext.path.params);
+                            if(this.twoParameter()){
+                                this.HttpContext.path.params.value = parseInt(this.HttpContext.path.params.x) * parseInt(this.HttpContext.path.params.y);
+                            }
                             break;
                         case "/":
-                            this.HttpContext.path.params.value = parseInt(this.HttpContext.path.params.x) / parseInt(this.HttpContext.path.params.y);
-                            this.HttpContext.response.JSON(this.HttpContext.path.params);
+                            if(this.twoParameter()){
+                                this.HttpContext.path.params.value = Division(parseInt(this.HttpContext.path.params.x), parseInt(this.HttpContext.path.params.y));
+                            }
                             break;
                         case "%":
-                            this.HttpContext.path.params.value = parseInt(this.HttpContext.path.params.x) % parseInt(this.HttpContext.path.params.y);
-                            this.HttpContext.response.JSON(this.HttpContext.path.params);
+                            if(this.twoParameter()){
+                                this.HttpContext.path.params.value = Modulo(parseInt(this.HttpContext.path.params.x), parseInt(this.HttpContext.path.params.y));
+                            }
                             break;
                         case "!":
-                            this.HttpContext.path.params.value = factorial(parseInt(this.HttpContext.path.params.n));
-                            this.HttpContext.response.JSON(this.HttpContext.path.params);
+                            if(this.oneParameter()){
+                                this.HttpContext.path.params.value = factorial(parseInt(this.HttpContext.path.params.n));
+                            }
                             break;
                         case "p":
-                            this.HttpContext.path.params.value = isPrime(parseInt(this.HttpContext.path.params.n));
-                            this.HttpContext.response.JSON(this.HttpContext.path.params);
+                            if(this.oneParameter()){
+                                this.HttpContext.path.params.value = isPrime(parseInt(this.HttpContext.path.params.n));
+                            }
                             break;
                         case "np":
-                            this.HttpContext.path.params.value = findPrime(parseInt(this.HttpContext.path.params.n));
-                            this.HttpContext.response.JSON(this.HttpContext.path.params);
+                            if(this.oneParameter()){
+                                this.HttpContext.path.params.value = findPrime(parseInt(this.HttpContext.path.params.n));
+                            }
                             break;
                         }
-                }else{
-                     let respondObj = {error: "op parameter is missing"};
-                     this.HttpContext.response.JSON(this.HttpContext.path.params.error);
-                     this.HttpContext.response.JSON(respondObj);
                 }
+                else{
+                    this.error("op parameter is missing");
+                }
+               this.HttpContext.response.JSON(this.HttpContext.path.params);
             }
-                
         }
     }
-    function Infinity(result) {
-            return result;
+    function Division(x,y) {
+        x = Number(x);
+        y = Number(y);
+        let value = x/y;
+        if(isNaN(value)){
+            value = "NaN"; 
+        }
+        if(value === Infinity)
+        {
+            value = "Infinity";
+        }
+        return value;
     }
-    function NaN(result){
-        return result;
-    }
-    function missingParameter(result){
-        return result;
+    function Modulo(x,y){
+        x = Number(x);
+        y = Number(y);
+        let value = x % y;
+        if(isNaN(value)){
+            value = "NaN"; 
+        }
+        return value;
     }
     function factorial(n) {
         if (n === 0 || n === 1) {
@@ -75,7 +125,6 @@ module.exports =
         }
         return n * factorial(n - 1);
     }
-
     function isPrime(value) {
         for (var i = 2; i < value; i++) {
             if (value % i === 0) {
@@ -84,7 +133,6 @@ module.exports =
         }
         return value > 1;
     }
-
     function findPrime(n) {
         let primeNumer = 0;
         for (let i = 0; i < n; i++) {
